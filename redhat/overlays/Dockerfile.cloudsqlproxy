@@ -1,0 +1,22 @@
+# Build the cloudsqlproxy binary
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:52ab391730a63945f61d93e8c913db4cc7a96f200de909cd525e2632055d9fa6 AS build-env
+WORKDIR /cloudsqlproxy
+RUN git config --global --add safe.directory /cloudsqlproxy
+
+COPY . .
+USER root
+RUN make build-cloudsqlproxy
+
+# Install server
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+COPY --from=build-env /cloudsqlproxy/cloudsqlproxy /usr/local/bin/cloudsqlproxy
+RUN chown root:0 /usr/local/bin/cloudsqlproxy && chmod g+wx /usr/local/bin/cloudsqlproxy
+
+#Configure home directory
+ENV HOME=/home
+RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
+
+WORKDIR ${HOME}
+
+# Set the binary as the entrypoint of the container
+ENTRYPOINT ["/user/local/bin/cloudsqlproxy"]
