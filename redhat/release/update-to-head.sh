@@ -67,10 +67,11 @@ if [[ -d redhat/patches ]]; then
   git apply redhat/patches/*
 fi
 
-# Move .tekton files to root
-if [[ -d redhat/.tekton ]]; then
-  git mv redhat/.tekton .
-fi
+# RHTAP writes its pipeline files to the root of ${redhat_ref}
+# Fetch those from origin and apply them to the the release branch
+# since we just wiped out our local copy with the upstream ref.
+git fetch origin $redhat_ref
+git checkout origin/$redhat_ref .tekton
 
 # Move overlays to root
 if [[ -d redhat/overlays ]]; then
