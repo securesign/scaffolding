@@ -39,7 +39,7 @@ fi
 echo "Synchronizing ${redhat_ref} to upstream/${upstream_ref}..."
 
 set -e
-REPO_NAME=$(basename $(git rev-parse --show-toplevel))
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
 
 # Custom files
 custom_files=$(cat <<EOT | tr '\n' ' '
@@ -51,16 +51,16 @@ redhat_files_msg=":open_file_folder: update Red Hat specific files"
 robot_trigger_msg=":robot: triggering CI on branch '${redhat_ref}' after synching from upstream/${upstream_ref}"
 
 # Reset release-next to upstream main or <git-ref>.
-git fetch upstream $upstream_ref
+git fetch upstream "$upstream_ref"
 if [[ "$upstream_ref" == "main" ]]; then
-  git checkout upstream/main -B ${redhat_ref}
+  git checkout upstream/main -B "${redhat_ref}"
 else
-  git checkout $upstream_ref -B ${redhat_ref}
+  git checkout $upstream_ref -B "${redhat_ref}"
 fi
 
 # Update redhat's main and take all needed files from there.
-git fetch origin $midstream_ref
-git checkout origin/$midstream_ref $custom_files
+git fetch origin "$midstream_ref"
+git checkout origin/"$midstream_ref" "$custom_files"
 
 # Apply midstream patches
 if [[ -d redhat/patches ]]; then
@@ -70,8 +70,8 @@ fi
 # RHTAP writes its pipeline files to the root of ${redhat_ref}
 # Fetch those from origin and apply them to the the release branch
 # since we just wiped out our local copy with the upstream ref.
-git fetch origin $redhat_ref
-git checkout origin/$redhat_ref .tekton
+git fetch origin "$redhat_ref"
+git checkout origin/"$redhat_ref" .tekton
 
 # Move overlays to root
 if [[ -d redhat/overlays ]]; then
@@ -79,7 +79,7 @@ if [[ -d redhat/overlays ]]; then
 fi
 
 git add . # Adds applied patches
-git add $custom_files # Adds custom files
+git add "$custom_files" # Adds custom files
 git commit -m "${redhat_files_msg}"
 
 # Push the release-next branch
@@ -94,10 +94,10 @@ git push -f origin "${redhat_ref}-ci"
 
 if hash hub 2>/dev/null; then
    # Test if there is already a sync PR in
-   COUNT=$(hub api -H "Accept: application/vnd.github.v3+json" repos/securesign/${REPO_NAME}/pulls --flat \
+   COUNT=$(hub api -H "Accept: application/vnd.github.v3+json" repos/securesign/"${REPO_NAME}"/pulls --flat \
     | grep -c "${robot_trigger_msg}") || true
    if [ "$COUNT" = "0" ]; then
-      hub pull-request --no-edit -l "kind/sync-fork-to-upstream" -b securesign/${REPO_NAME}:${redhat_ref} -h securesign/${REPO_NAME}:${redhat_ref}-ci -m "${robot_trigger_msg}"
+      hub pull-request --no-edit -l "kind/sync-fork-to-upstream" -b securesign/"${REPO_NAME}":"${redhat_ref}" -h securesign/"${REPO_NAME}":"${redhat_ref}"-ci -m "${robot_trigger_msg}"
    fi
 else
    echo "hub (https://github.com/github/hub) is not installed, so you'll need to create a PR manually."
