@@ -8,7 +8,7 @@ USER root
 RUN make build-fulcio-createcerts
 
 # Install server
-FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:0dfa71a7ec2caf445e7ac6b7422ae67f3518960bd6dbf62a7b77fa7a6cfc02b1
 COPY --from=build-env /createcerts/createcerts /usr/local/bin/createcerts
 RUN chown root:0 /usr/local/bin/createcerts && chmod g+wx /usr/local/bin/createcerts
 
