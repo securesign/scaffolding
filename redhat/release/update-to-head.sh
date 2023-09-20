@@ -60,7 +60,7 @@ fi
 
 # Update redhat's main and take all needed files from there.
 git fetch origin "$midstream_ref"
-git checkout origin/"$midstream_ref" "$custom_files"
+git checkout origin/"$midstream_ref" $custom_files
 
 # Apply midstream patches
 if [[ -d redhat/patches ]]; then
@@ -79,7 +79,7 @@ if [[ -d redhat/overlays ]]; then
 fi
 
 git add . # Adds applied patches
-git add "$custom_files" # Adds custom files
+git add $custom_files # Adds custom files
 git commit -m "${redhat_files_msg}"
 
 # Push the release-next branch
