@@ -19,4 +19,4 @@ RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
 WORKDIR ${HOME}
 
 # Set the binary as the entrypoint of the container
-ENTRYPOINT ["/user/local/bin/ct_server"]
+ENTRYPOINT ["ct_server"]
