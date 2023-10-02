@@ -78,6 +78,11 @@ if [[ -d redhat/overlays ]]; then
   git mv redhat/overlays/* .
 fi
 
+# Move build-assets to hack/build-assets
+if [[ -d redhat/build-assets ]]; then
+  git mv redhat/build-assets/* hack/build-assets
+fi
+
 git add . # Adds applied patches
 git add $custom_files # Adds custom files
 git commit -m "${redhat_files_msg}"
