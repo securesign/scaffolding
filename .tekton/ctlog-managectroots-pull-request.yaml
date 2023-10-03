@@ -11,21 +11,21 @@ metadata:
     pipelinesascode.tekton.dev/on-target-branch: '[redhat-v0.6.5]'
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: scaffolding
+    appstudio.openshift.io/application: rhtas-stack-1-0-beta
     appstudio.openshift.io/component: ctlog-managectroots
     pipelines.appstudio.openshift.io/type: build
   name: ctlog-managectroots-on-pull-request
-  namespace: securesign-tenant
+  namespace: rhtas-tenant
 spec:
   params:
   - name: dockerfile
-    value: https://raw.githubusercontent.com/securesign/scaffolding/redhat-v0.6.5/Dockerfile.ctlog-managectroots
+    value: Dockerfile.ctlog-managectroots
   - name: git-url
     value: '{{repo_url}}'
   - name: image-expires-after
     value: 5d
   - name: output-image
-    value: quay.io/redhat-user-workloads/securesign-tenant/scaffolding/ctlog-managectroots:on-pr-{{revision}}
+    value: quay.io/redhat-user-workloads/rhtas-tenant/rhtas-stack-1-0-beta/ctlog-managectroots:on-pr-{{revision}}
   - name: path-context
     value: .
   - name: revision
