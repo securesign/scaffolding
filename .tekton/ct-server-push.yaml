@@ -27,6 +27,10 @@ spec:
     value: .
   - name: revision
     value: '{{revision}}'
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: [{"path": ".", "type": "gomod"}, {"path": "./hack/build-assets/certificate-transparency-go-1.1.6", "type": "gomod"}]
   pipelineSpec:
     finally:
     - name: show-sbom
@@ -364,6 +368,21 @@ spec:
         operator: in
         values:
         - "false"
+    - name: run-unit-test
+      runAfter:
+      - prefetch-dependencies    
+      taskRef:
+        params:
+        - name: name
+          value: go-unit-test
+        - name: bundle
+          value: quay.io/securesign/scaffolding-unit-test@sha256:0cc9a9c7c2c452f42eb7877c0d09888d0716e9689cce4abf980f57d8b7d3a995
+        - name: kind
+          value: task
+        resolver: bundles
+      workspaces:
+        - name: source
+          workspace: workspace
     workspaces:
     - name: workspace
     - name: git-auth
