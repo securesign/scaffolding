@@ -33,7 +33,7 @@ spec:
   - name: hermetic
     value: "true"
   - name: prefetch-input
-    value: [{"path": ".", "type": "gomod"}, {"path": "./hack/build-assets/certificate-transparency-go-1.1.6", "type": "gomod"}]
+    value: [{"path": ".", "type": "gomod"}, {"path": "./hack/build-assets", "type": "gomod"}]
   pipelineSpec:
     finally:
     - name: show-sbom
