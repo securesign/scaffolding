@@ -23,6 +23,7 @@ LABEL io.k8s.description="The createctconfig job is responsible for configuring 
 LABEL io.k8s.display-name="createctconfig job container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="createctconfig, Red Hat trusted artifact signer."
 LABEL summary="Provides the createctconfig binary."
+LABEL com.redhat.component="createctconfig"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["createctconfig"]

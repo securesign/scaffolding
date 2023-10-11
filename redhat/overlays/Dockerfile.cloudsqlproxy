@@ -23,6 +23,7 @@ LABEL io.k8s.description="Cloud SQL Proxy is a tool that makes connecting to Clo
 LABEL io.k8s.display-name="Cloud SQL Proxy container image for redhat trusted artifact signer."
 LABEL io.openshift.tags="cloudsqlproxy, Red Hat Trusted Artifact Signer."
 LABEL summary="Provides the binary for cloudsqlproxy."
+LABEL com.redhat.component="cloudsqlproxy"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["cloudsqlproxy"]
