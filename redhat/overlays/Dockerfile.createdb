@@ -23,6 +23,7 @@ LABEL io.k8s.description="The createdb job is responsible for creating the MySQL
 LABEL io.k8s.display-name="createdb job container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="createdb, Red Hat trusted artifact signer."
 LABEL summary="Provides the createdb binary."
+LABEL com.redhat.component="createdb"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["createdb"]
