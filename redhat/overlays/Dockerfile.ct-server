@@ -23,6 +23,7 @@ LABEL io.k8s.description="The binary responsible for providing the Certificate T
 LABEL io.k8s.display-name="CT server container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="CT-server, Red Hat trusted artifact signer."
 LABEL summary="Provides the CT-server binary."
+LABEL com.redhat.component="ct-server"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["ct_server"]

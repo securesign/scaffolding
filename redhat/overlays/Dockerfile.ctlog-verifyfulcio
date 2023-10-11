@@ -25,6 +25,7 @@ LABEL io.k8s.description="The job responsible for verifying Fulcio."
 LABEL io.k8s.display-name="Fulcio verification job container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="verifyfulcio, Red Hat trusted artifact signer."
 LABEL summary="Provides the binary for verifyfulcio."
+LABEL com.redhat.component="ctlog-verifyfulcio"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["verifyfulcio"]

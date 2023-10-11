@@ -24,6 +24,7 @@ LABEL io.k8s.description="The job responsible for managing the roots of the CT (
 LABEL io.k8s.display-name="managectroots job container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="managectroots, Red Hat trusted artifact signer."
 LABEL summary="Provides the binary for the managectroots job."
+LABEL com.redhat.component="ctlog-managectroots"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["managectroots"]
