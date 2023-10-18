@@ -1,5 +1,5 @@
 # Build the managectroots binary
-FROM registry.access.redhat.com/ubi9/go-toolset@sha256:e91cbbd0b659498d029dd43e050c8a009c403146bfba22cbebca8bcd0ee7925f AS build-env
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:7e49e105a854749d67e5e02fb4069b48bd50445098c780b7f808cc351dee2589 AS build-env
 WORKDIR /ctlog-managectroots
 RUN git config --global --add safe.directory /ctlog-managectroots
 
@@ -9,7 +9,7 @@ USER root
 RUN make build-ctlog-managectroots
 
 # Install server
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:9c810eccada0cc6f25b46eeeea4516bab01828faef4fdd2fe49c760518b90dd1
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:93d357bf8fae4a4965515898504d3c45b7421a56fc45fdd52651535a25af1023
 COPY --from=build-env /ctlog-managectroots/managectroots /usr/local/bin/managectroots
 RUN chown root:0 /usr/local/bin/managectroots && chmod g+wx /usr/local/bin/managectroots
 
@@ -24,6 +24,7 @@ LABEL io.k8s.description="The job responsible for managing the roots of the CT (
 LABEL io.k8s.display-name="managectroots job container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="managectroots, Red Hat trusted artifact signer."
 LABEL summary="Provides the binary for the managectroots job."
+LABEL com.redhat.component="ctlog-managectroots"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["managectroots"]

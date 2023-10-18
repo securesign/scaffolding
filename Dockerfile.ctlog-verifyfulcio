@@ -1,5 +1,5 @@
 # Build the verifyfulcio binary
-FROM registry.access.redhat.com/ubi9/go-toolset@sha256:e91cbbd0b659498d029dd43e050c8a009c403146bfba22cbebca8bcd0ee7925f AS build-env
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:7e49e105a854749d67e5e02fb4069b48bd50445098c780b7f808cc351dee2589 AS build-env
 WORKDIR /ctlog-verifyfulcio
 RUN git config --global --add safe.directory /ctlog-verifyfulcio
 
@@ -9,7 +9,7 @@ USER root
 RUN make build-ctlog-verifyfulcio
 
 # Install server
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:9c810eccada0cc6f25b46eeeea4516bab01828faef4fdd2fe49c760518b90dd1
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:93d357bf8fae4a4965515898504d3c45b7421a56fc45fdd52651535a25af1023
 
 COPY --from=build-env /ctlog-verifyfulcio/verifyfulcio /usr/local/bin/verifyfulcio
 RUN chown root:0 /usr/local/bin/verifyfulcio && chmod g+wx /usr/local/bin/verifyfulcio
@@ -25,6 +25,7 @@ LABEL io.k8s.description="The job responsible for verifying Fulcio."
 LABEL io.k8s.display-name="Fulcio verification job container image for Red Hat Trusted Artifact Signer."
 LABEL io.openshift.tags="verifyfulcio, Red Hat trusted artifact signer."
 LABEL summary="Provides the binary for verifyfulcio."
+LABEL com.redhat.component="ctlog-verifyfulcio"
 
 # Set the binary as the entrypoint of the container
 ENTRYPOINT ["verifyfulcio"]
