@@ -72,9 +72,9 @@ if [[ -d redhat/overlays ]]; then
   mv redhat/overlays/* .
 fi
 
-# Move build-assets to hack/build-assets
+# Copy build-assets to hack/build-assets
 if [[ -d redhat/build-assets ]]; then
-  mv redhat/build-assets/* hack/build-assets
+  cp -Rp redhat/build-assets/* hack/build-assets/
 fi
 
 git add . # Adds applied patches
