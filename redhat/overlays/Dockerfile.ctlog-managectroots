@@ -1,5 +1,5 @@
 # Build the managectroots binary
-FROM registry.access.redhat.com/ubi9/go-toolset@sha256:82d9bc5d3ceb43635288880f26207201e55d1c688a60ebbfff4f54d4963a62a1 AS build-env
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:001ec1ff65772f0fb6ff03d995a56f11492541d98b25cccf2d749f2ddbdbcea2 AS build-env
 WORKDIR /ctlog-managectroots
 RUN git config --global --add safe.directory /ctlog-managectroots
 
@@ -9,7 +9,7 @@ USER root
 RUN make build-ctlog-managectroots
 
 # Install server
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:b40f52aa68b29634ff45429ee804afbaa61b33de29ae775568933c71610f07a4
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:7d1ea7ac0c6f464dac7bae6994f1658172bf6068229f40778a513bc90f47e624
 COPY --from=build-env /ctlog-managectroots/managectroots /usr/local/bin/managectroots
 RUN chown root:0 /usr/local/bin/managectroots && chmod g+wx /usr/local/bin/managectroots
 
