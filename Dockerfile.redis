@@ -1,0 +1,15 @@
+FROM registry.redhat.io/rhel9/redis-6@sha256:031a5a63611e1e6a9fec47492a32347417263b79ad3b63bcee72fc7d02d64c94
+
+LABEL description="Securesign redis is built ontop of rhel9/redis-6 but accepts external connections and runs appendonly mode with full durability."
+LABEL io.k8s.description="Securesign redis is built ontop of rhel9/redis-6 but accepts external connections and runs appendonly mode with full durability."
+LABEL io.k8s.display-name="redis container image for Red Hat trusted artifact signer."
+LABEL io.openshift.tags="redis, Red Hat trusted artifact signer."
+LABEL summary="Runs redis in appendonly mode with enablement for external connections by default."
+LABEL com.redhat.component="redis"
+
+USER 1001
+
+RUN sed -i 's/#bind 127.0.0.1 -::1/bind 0.0.0.0/g' /etc/redis/redis.conf && sed -i 's/appendonly no/appendonly yes/g' /etc/redis/redis.conf
+
+ENTRYPOINT ["container-entrypoint"]
+CMD ["run-redis"]
