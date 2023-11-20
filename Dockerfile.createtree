@@ -1,0 +1,29 @@
+# Build the createtree binary
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:c3a9c5c7fb226f6efcec2424dd30c38f652156040b490c9eca5ac5b61d8dc3ca AS build-env
+WORKDIR /createtree
+RUN git config --global --add safe.directory /createtree
+
+COPY . .
+USER root
+RUN make build-trillian-createtree
+
+# Install server
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:7d1ea7ac0c6f464dac7bae6994f1658172bf6068229f40778a513bc90f47e624
+COPY --from=build-env /createtree/createtree /usr/local/bin/createtree
+RUN chown root:0 /usr/local/bin/createtree && chmod g+wx /usr/local/bin/createtree
+
+#Configure home directory
+ENV HOME=/home
+RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
+
+WORKDIR ${HOME}
+
+LABEL description="The createtree job is responsible for creating a Merkle Tree for Rekor."
+LABEL io.k8s.description="The createtree job is responsible for creating a Merkle Tree for Rekor."
+LABEL io.k8s.display-name="createtree job container image for Red Hat Trusted Artifact Signer."
+LABEL io.openshift.tags="createtree, Red Hat trusted artifact signer."
+LABEL summary="Provides the createtree binary."
+LABEL com.redhat.component="createtree"
+
+# Set the binary as the entrypoint of the container
+ENTRYPOINT ["createtree"]
