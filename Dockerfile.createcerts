@@ -1,0 +1,29 @@
+# Build the createcerts binary
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:c3a9c5c7fb226f6efcec2424dd30c38f652156040b490c9eca5ac5b61d8dc3ca AS build-env
+WORKDIR /createcerts
+RUN git config --global --add safe.directory /createcerts
+
+COPY . .
+USER root
+RUN make build-fulcio-createcerts
+
+# Install server
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:7d1ea7ac0c6f464dac7bae6994f1658172bf6068229f40778a513bc90f47e624
+COPY --from=build-env /createcerts/createcerts /usr/local/bin/createcerts
+RUN chown root:0 /usr/local/bin/createcerts && chmod g+wx /usr/local/bin/createcerts
+
+#Configure home directory
+ENV HOME=/home
+RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
+
+WORKDIR ${HOME}
+
+LABEL description="The createcerts job creates a self-signed certificate, along with private/public keys, and a password used to encrypt the private key."
+LABEL io.k8s.description="The createcerts job creates a self-signed certificate, along with private/public keys, and a password used to encrypt the private key."
+LABEL io.k8s.display-name="createcerts job container image for Red Hat trusted artifact signer."
+LABEL io.openshift.tags="createcerts, Red Hat trusted artifact signer."
+LABEL summary="Provides the createcerts binary."
+LABEL com.redhat.component="createcerts"
+
+# Set the binary as the entrypoint of the container
+ENTRYPOINT ["createcerts"]

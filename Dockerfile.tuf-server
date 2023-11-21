@@ -1,0 +1,29 @@
+# Build the tuf server binary
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:c3a9c5c7fb226f6efcec2424dd30c38f652156040b490c9eca5ac5b61d8dc3ca AS build-env
+WORKDIR /tuf-server
+RUN git config --global --add safe.directory /tuf-server
+
+COPY . .
+USER root
+RUN make build-tuf-server
+
+# Install server
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:7d1ea7ac0c6f464dac7bae6994f1658172bf6068229f40778a513bc90f47e624
+COPY --from=build-env /tuf-server/server /usr/local/bin/tuf-server
+RUN chown root:0 /usr/local/bin/tuf-server && chmod g+wx /usr/local/bin/tuf-server
+
+#Configure home directory
+ENV HOME=/home
+RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
+
+WORKDIR ${HOME}
+
+LABEL description="Binary for the TUF (The Update Framework) server."
+LABEL io.k8s.description="Binary for the TUF (The Update Framework) server."
+LABEL io.k8s.display-name="TUF server container image for Red Hat Trusted Artifact Signer."
+LABEL io.openshift.tags="TUF-server, Red Hat trusted artifact signer."
+LABEL summary="Provides the TUF server binary."
+LABEL com.redhat.component="tuf-server"
+
+# Set the binary as the entrypoint of the container
+ENTRYPOINT ["tuf-server"]
