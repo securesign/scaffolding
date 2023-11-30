@@ -1,12 +1,13 @@
 # Build the createcerts binary
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder@sha256:98a0ff138c536eee98704d6909699ad5d0725a20573e2c510a60ef462b45cce0 AS build-env
+FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.21@sha256:98a0ff138c536eee98704d6909699ad5d0725a20573e2c510a60ef462b45cce0 AS build-env
+USER root
+RUN mkdir /createcerts
 WORKDIR /createcerts
 RUN git config --global --add safe.directory /createcerts
 
 COPY . .
-USER root
-RUN go mod vendor
-RUN make build-fulcio-createcerts
+RUN CGO_ENABLED=0 go mod download
+RUN CGO_ENABLED=0 go build -o createcerts -mod=readonly -trimpath ./cmd/ctlog/createctconfig
 
 # Install server
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:7d1ea7ac0c6f464dac7bae6994f1658172bf6068229f40778a513bc90f47e624

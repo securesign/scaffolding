@@ -6,8 +6,8 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "redhat-v0.6"
+    pipelinesascode.tekton.dev/on-cel-expression: |
+      event == "push" && target_branch == "redhat-v0.6" && ( ".tekton/createctconfig-0-6-push.yaml".pathChanged() || "Dockerfile.createctconfig".pathChanged() || "Makefile".pathChanged() || "go.mod".pathChanged() || "cmd/ctlog/createctconfig/***".pathChanged() )
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: scaffold-1-0-gamma
@@ -18,7 +18,7 @@ metadata:
 spec:
   params:
   - name: dockerfile
-    value: https://raw.githubusercontent.com/securesign/scaffolding/redhat-v0.6/Dockerfile.createctconfig
+    value: Dockerfile.createctconfig
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
@@ -27,6 +27,12 @@ spec:
     value: .
   - name: revision
     value: '{{revision}}'
+  - name: hermetic
+    value: "true"
+  - name: build-source-image
+    value: "true"
+  - name: prefetch-input
+    value: '{"type": "gomod", "path": "."}'
   pipelineSpec:
     finally:
     - name: show-sbom

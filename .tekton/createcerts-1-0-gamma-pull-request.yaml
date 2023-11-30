@@ -8,7 +8,7 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: |
-      event == "push" && target_branch == "redhat-v0.6" && ( "cmd/fulcio/createcerts/*".pathChanged() || ".tekton/createcerts-*-pull-request.yaml".pathChanged() || "/Dockerfile.createcerts".pathChanged() || "Makefile".pathChanged() || "go.mod".pathChanged() || "config/fulcio/certs/*".pathChanged())
+      event == "push" && target_branch == "redhat-v0.6" && ( "cmd/fulcio/createcerts/***".pathChanged() || ".tekton/createcerts-1-0-gamma-pull-request.yaml".pathChanged() || "Dockerfile.createcerts".pathChanged() || "Makefile".pathChanged() || "go.mod".pathChanged() || "config/fulcio/certs/***".pathChanged())
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: fulcio-1-0-gamma
@@ -19,7 +19,7 @@ metadata:
 spec:
   params:
   - name: dockerfile
-    value: https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/docker/Dockerfile
+    value: Dockerfile.createcerts
   - name: git-url
     value: '{{repo_url}}'
   - name: image-expires-after
@@ -30,6 +30,12 @@ spec:
     value: .
   - name: revision
     value: '{{revision}}'
+  - name: hermetic
+    value: "true"
+  - name: build-source-image
+    value: "true"
+  - name: prefetch-input
+    value: '{"type": "gomod", "path": "."}'
   pipelineSpec:
     finally:
     - name: show-sbom
