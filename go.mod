@@ -2,7 +2,7 @@ module github.com/sigstore/scaffolding
 
 go 1.21
 
-toolchain go1.21.1
+// toolchain go1.21.1
 
 // Ping to v1.57.1 until google/certificate-transparency-go is on 1.58.3 or higher
 // https://github.com/google/certificate-transparency-go/pull/1151

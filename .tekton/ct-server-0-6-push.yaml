@@ -6,8 +6,7 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: |
-      event == "pull_request" && target_branch == "redhat-v0.6" && ( ".tekton/ct-server-*-push.yaml".pathChanged() || "/Dockerfile.ct-server".pathChanged() || "hack/build-assets/*".pathChanged )
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "redhat-v0.6" && ( ".tekton/ct-server-*-push.yaml".pathChanged() || "/Dockerfile.ct-server".pathChanged() || "hack/build-assets/*".pathChanged )
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: scaffold-1-0-gamma
@@ -18,7 +17,7 @@ metadata:
 spec:
   params:
   - name: dockerfile
-    value: https://raw.githubusercontent.com/securesign/scaffolding/redhat-v0.6/Dockerfile.createctconfig
+    value: Dockerfile.createctconfig
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
