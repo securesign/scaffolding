@@ -14,6 +14,8 @@ spec:
       script: |
         #!/usr/bin/env sh
         go test ./...
+  imagePullSecrets:
+    - name: brew-registry-pull-secret
 
 # This file bundles the unit tests for scaffolding. 
 # If any changes are made to this file, it must be pushed to Quay using the following command:
