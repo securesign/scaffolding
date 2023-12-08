@@ -29,12 +29,8 @@ spec:
     value: .
   - name: revision
     value: '{{revision}}'
-  - name: hermetic
-    value: "true"
   - name: build-source-image
     value: "true"
-  - name: prefetch-input
-    value: '{"type": "gomod", "path": "."}'
   pipelineSpec:
     finally:
     - name: show-sbom
