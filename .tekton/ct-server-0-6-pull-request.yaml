@@ -8,7 +8,7 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: |
-      event == "pull_request" && target_branch == "redhat-v0.6" && ( ".tekton/ct-server-*-pull-request.yaml".pathChanged() || "/Dockerfile.ct-server".pathChanged() || "hack/build-assets/*".pathChanged )
+      event == "pull_request" && target_branch == "redhat-v0.6" && ( ".tekton/ct-server-*-pull-request.yaml".pathChanged() || "Dockerfile.ct-server".pathChanged() || "hack/build-assets/*".pathChanged )
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: scaffold-1-0-gamma
