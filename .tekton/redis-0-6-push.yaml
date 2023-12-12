@@ -10,7 +10,7 @@ metadata:
       event == "push" && target_branch == "redhat-v0.6" && ( ".tekton/redis-0-6-push.yaml".pathChanged() || "Dockerfile.redis".pathChanged() )
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: scaffold-1-0-gamma
+    appstudio.openshift.io/application: trillian-1-0-gamma
     appstudio.openshift.io/component: redis-0-6
     pipelines.appstudio.openshift.io/type: build
   name: redis-0-6-on-push
@@ -22,7 +22,7 @@ spec:
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtas-tenant/scaffold-1-0-gamma/redis-0-6:{{revision}}
+    value: quay.io/redhat-user-workloads/rhtas-tenant/trillian-1-0-gamma/redis-0-6:{{revision}}
   - name: path-context
     value: .
   - name: revision
@@ -63,7 +63,7 @@ spec:
         - name: name
           value: summary
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-summary:0.1@sha256:f65a69aaf71cbab382eff685eee522ad35068a4d91d233e76cef7d42ff15a686
+          value: quay.io/redhat-appstudio-tekton-catalog/task-summary:0.1@sha256:08fde7abf2e24f31d68119d613fb208a25c71263cef440f02c8cb3a43d91813d
         - name: kind
           value: task
         resolver: bundles
@@ -233,7 +233,7 @@ spec:
         - name: name
           value: buildah
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:d95e898c518093c24bc7dacd25aa98a39996262a6b34650e403b60b1c8c10fda
+          value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:8607f9b9d7696e156f186f3fc379ab2e4472c865431ef423e19a26f8707a2961
         - name: kind
           value: task
         resolver: bundles
@@ -258,7 +258,7 @@ spec:
         - name: name
           value: source-build
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-source-build:0.1@sha256:f8c5dec871fb5347eb2fc61d44754bcc101897aecf953b374ab3e8315e1a9804
+          value: quay.io/redhat-appstudio-tekton-catalog/task-source-build:0.1@sha256:d8ef64abadd6c7763769ef20e40a418f89f44f657a11d6fac40d9c4dc984715a
         - name: kind
           value: task
         resolver: bundles
@@ -349,7 +349,7 @@ spec:
         - name: name
           value: clamav-scan
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-clamav-scan:0.1@sha256:d742ad90474ecccd066bbd98657885602e32c9f76d26991726b63a44f11feab2
+          value: quay.io/redhat-appstudio-tekton-catalog/task-clamav-scan:0.1@sha256:034b65ed165951f526d38d290a49ff124d38257beda7a625b98244159fadd00e
         - name: kind
           value: task
         resolver: bundles
