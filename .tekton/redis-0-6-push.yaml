@@ -32,7 +32,7 @@ spec:
   - name: build-source-image
     value: "true"
   - name: prefetch-input
-    value: '{}'
+    value: ''
   pipelineSpec:
     finally:
     - name: show-sbom
