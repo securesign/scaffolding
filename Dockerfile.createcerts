@@ -5,7 +5,7 @@ RUN git config --global --add safe.directory /createcerts
 #
 COPY . .
 RUN CGO_ENABLED=0 go mod vendor
-RUN CGO_ENABLED=0 go build -o createcerts -mod=readonly -trimpath ./cmd/ctlog/createctconfig
+RUN CGO_ENABLED=0 go build -o createcerts -mod=readonly -trimpath ./cmd/fulcio/createcerts
 
 # Install server
 FROM registry.access.redhat.com/ubi9-minimal@sha256:a340f4b9fb261a75c84666a3dccb88e193a116da3cebabaf9bcdc33609b61172
