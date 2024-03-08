@@ -7,7 +7,8 @@ metadata:
     build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch == "main" && ( "config/fulcio/fulcio/*".pathChanged() || "cmd/ctlog/verifyfulcio/*".pathChanged() || ".tekton/ctlog-verify-fulcio-pull-request.yaml".pathChanged() || "Dockerfile.ctlog-verifyfulcio.rh".pathChanged() || "go.mod".pathChanged() || "Makefile".pathChanged()  )
+    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
+      == "main"
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: scaffold
@@ -20,7 +21,7 @@ spec:
   - name: dockerfile
     value: Dockerfile.ctlog-verifyfulcio.rh
   - name: git-url
-    value: '{{repo_url}}'
+    value: '{{source_url}}'
   - name: image-expires-after
     value: 5d
   - name: output-image
@@ -29,12 +30,6 @@ spec:
     value: .
   - name: revision
     value: '{{revision}}'
-  - name: prefetch-input
-    value: '{"type": "gomod", "path": "."}'
-  - name: hermetic
-    value: "true"
-  - name: build-source-image
-    value: "true"
   pipelineSpec:
     finally:
     - name: show-sbom
@@ -97,10 +92,6 @@ spec:
     - default: "false"
       description: Skip checks against built image
       name: skip-checks
-      type: string
-    - default: "true"
-      description: Skip optional checks, set false if you want to run optional checks
-      name: skip-optional
       type: string
     - default: "false"
       description: Execute the build with network isolation
@@ -169,7 +160,7 @@ spec:
         - name: name
           value: git-clone
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-git-clone:0.1@sha256:ddc1b741a59e24817b24f190aab820700b6a8cf78cdd1827c403375bdba8aeee
+          value: quay.io/redhat-appstudio-tekton-catalog/task-git-clone:0.1@sha256:982e53397367ea9680b5cc543f5cbfc8e90124ffb463551eea33e4477d0a7ec6
         - name: kind
           value: task
         resolver: bundles
@@ -229,7 +220,7 @@ spec:
         - name: name
           value: buildah
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:e1e6c6308b8c7d5aa2faa02129af7fcc9e8dc4bbfe741c1acab5c9edca28fb77
+          value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:cfb32c9f1ec9c217bc81389d6aeacdb9e7a092a7fa86d4fed7b6fbb2612f5c1d
         - name: kind
           value: task
         resolver: bundles
@@ -312,6 +303,26 @@ spec:
         operator: in
         values:
         - "false"
+    - name: ecosystem-cert-preflight-checks
+      params:
+      - name: image-url
+        value: $(tasks.build-container.results.IMAGE_URL)
+      runAfter:
+      - build-container
+      taskRef:
+        params:
+        - name: name
+          value: ecosystem-cert-preflight-checks
+        - name: bundle
+          value: quay.io/redhat-appstudio-tekton-catalog/task-ecosystem-cert-preflight-checks:0.1@sha256:4bcabe436ddbef6af8f8108ee234d83e116e63e91f64a77191e1492db11bf56b
+        - name: kind
+          value: task
+        resolver: bundles
+      when:
+      - input: $(params.skip-checks)
+        operator: in
+        values:
+        - "false"
     - name: sast-snyk-check
       runAfter:
       - clone-repository
@@ -376,21 +387,6 @@ spec:
         operator: in
         values:
         - "false"
-    - name: run-unit-test
-      runAfter:
-      - prefetch-dependencies
-      taskRef:
-        params:
-        - name: name
-          value: go-unit-test
-        - name: bundle
-          value: quay.io/securesign/scaffolding-unit-test@sha256:b8821911aa9ead908dd986f2eb2f1690227e4ef7c65a97edceacafeb1003b180
-        - name: kind
-          value: task
-        resolver: bundles
-      workspaces:
-        - name: source
-          workspace: workspace
     workspaces:
     - name: workspace
     - name: git-auth
