@@ -10,8 +10,9 @@ jobs:
     uses: securesign/actions/.github/workflows/check-image-version.yaml@main
     strategy:
       matrix:
-        branch: [main, redhat-v0.6]
+        branch: [main]
     with:
       branch: ${{ matrix.branch }}
+      images: '["registry.access.redhat.com/ubi9-minimal"]'
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
