@@ -15,7 +15,7 @@ FROM registry.access.redhat.com/ubi9-minimal@sha256:119ac25920c8bb50c8b5fd75dcbc
 COPY --from=build-env /ctlog-verifyfulcio/verifyfulcio /usr/local/bin/verifyfulcio
 RUN chown root:0 /usr/local/bin/verifyfulcio && chmod g+wx /usr/local/bin/verifyfulcio
 
-#Configure home directory
+# Configure home directory
 ENV HOME=/home
 RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
 

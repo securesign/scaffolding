@@ -2,7 +2,7 @@
 FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.21@sha256:98a0ff138c536eee98704d6909699ad5d0725a20573e2c510a60ef462b45cce0 AS build-env
 WORKDIR /createcerts
 RUN git config --global --add safe.directory /createcerts
-#
+
 COPY . .
 RUN CGO_ENABLED=0 go mod vendor
 RUN CGO_ENABLED=0 go build -o createcerts -mod=readonly -trimpath ./cmd/fulcio/createcerts
@@ -12,7 +12,7 @@ FROM registry.access.redhat.com/ubi9-minimal@sha256:119ac25920c8bb50c8b5fd75dcbc
 COPY --from=build-env /createcerts/createcerts /usr/local/bin/createcerts
 RUN chown root:0 /usr/local/bin/createcerts && chmod g+wx /usr/local/bin/createcerts
 
-#Configure home directory
+# Configure home directory
 ENV HOME=/home
 RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
 

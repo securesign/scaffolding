@@ -13,7 +13,7 @@ FROM registry.access.redhat.com/ubi9-minimal@sha256:119ac25920c8bb50c8b5fd75dcbc
 COPY --from=build-env /createtree/createtree /usr/local/bin/createtree
 RUN chown root:0 /usr/local/bin/createtree && chmod g+wx /usr/local/bin/createtree
 
-#Configure home directory
+# Configure home directory
 ENV HOME=/home
 RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
 

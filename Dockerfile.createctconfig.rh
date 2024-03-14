@@ -13,7 +13,7 @@ FROM registry.access.redhat.com/ubi9-minimal@sha256:119ac25920c8bb50c8b5fd75dcbc
 COPY --from=build-env /createctconfig/createctconfig /usr/local/bin/createctconfig
 RUN chown root:0 /usr/local/bin/createctconfig && chmod g+wx /usr/local/bin/createctconfig
 
-#Configure home directory
+# Configure home directory
 ENV HOME=/home
 RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
 
