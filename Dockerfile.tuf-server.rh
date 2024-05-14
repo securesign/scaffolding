@@ -9,7 +9,7 @@ RUN go mod vendor
 RUN make build-tuf-server
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:119ac25920c8bb50c8b5fd75dcbca369bf7d1f702b82f3d39663307890f0bf26
+FROM registry.access.redhat.com/ubi9-minimal@sha256:cb6f20b9225031c8d704af95932c0331cfe0b229cd5b3dd805681d92a439186e
 COPY --from=build-env /tuf-server/server /usr/local/bin/tuf-server
 RUN chown root:0 /usr/local/bin/tuf-server && chmod g+wx /usr/local/bin/tuf-server
 
