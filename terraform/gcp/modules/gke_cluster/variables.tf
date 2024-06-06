@@ -219,3 +219,15 @@ variable "monitoring_components" {
   type    = list(string)
   default = ["SYSTEM_COMPONENTS"]
 }
+
+variable "security_group" {
+  description = "Name of security group used for Google Groups RBAC within GKE Cluster"
+  type        = string
+  default     = ""
+}
+
+variable "oauth_scopes" {
+  description = "OAuth scopes to assign to the cluster node config"
+  type        = list(string)
+  default     = ["https://www.googleapis.com/auth/cloud-platform"]
+}

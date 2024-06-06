@@ -66,7 +66,7 @@ resource "google_container_cluster" "cluster" {
     }
     tags            = [local.cluster_network_tag]
     service_account = google_service_account.gke-sa.email
-    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
+    oauth_scopes    = var.oauth_scopes
   }
 
   resource_labels = {
@@ -145,6 +145,13 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+  dynamic "authenticator_groups_config" {
+    for_each = var.security_group == "" ? [] : [1]
+    content {
+      security_group = var.security_group
+    }
+  }
+
   depends_on = [google_project_service.service]
 }
 
@@ -176,4 +183,3 @@ resource "google_compute_firewall" "master-webhooks" {
 
   depends_on = [google_container_cluster.cluster]
 }
-
