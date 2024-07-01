@@ -21,7 +21,7 @@ spec:
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtas-tenant/scaffold/createctconfig:{{revision}}
+    value: quay.io/securesign/scaffold-createctconfig:{{revision}}
   - name: path-context
     value: .
   - name: revision
