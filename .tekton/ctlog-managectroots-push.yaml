@@ -21,7 +21,7 @@ spec:
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtas-tenant/scaffold/ctlog-managectroots:{{revision}}
+    value: quay.io/securesign/scaffold-ctlog-managectroots:{{revision}}
   - name: path-context
     value: .
   - name: revision
