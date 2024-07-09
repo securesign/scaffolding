@@ -85,6 +85,12 @@ case ${K8S_VERSION} in
     KIND_IMAGE_SHA="sha256:51a1434a5397193442f0be2a297b488b6c919ce8a3931be0ce822606ea5ca245"
     KIND_IMAGE=kindest/node:${K8S_VERSION}@${KIND_IMAGE_SHA}
     ;;
+  v1.30.x)
+    K8S_VERSION="1.30.0"
+    KNATIVE_VERSION="1.12.0"
+    KIND_IMAGE_SHA="sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e"
+    KIND_IMAGE=kindest/node:${K8S_VERSION}@${KIND_IMAGE_SHA}
+    ;;
   *) echo "Unsupported version: ${K8S_VERSION}"; exit 1 ;;
 esac
 
@@ -203,9 +209,9 @@ echo '::endgroup::'
 #    Setup metallb
 #
 #############################################################
-echo '::group:: Setup metallb'
+echo '::group:: Setup metallb 0.14.5'
 
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.5/config/manifests/metallb-native.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
 kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 
 # Wait for Metallb to be ready (or webhook will reject CRDs)
@@ -216,7 +222,7 @@ done
 # And allow for few seconds for things to settle just to make sure things are up
 sleep 5
 
-network=$(docker network inspect kind -f "{{(index .IPAM.Config 0).Subnet}}" | cut -d '.' -f1,2)
+network=$(docker network inspect kind | jq -r '.[0].IPAM.Config[] | select(.Subnet | test("^[0-9]+\\.")) | .Subnet' | cut -d '.' -f1,2)
 cat <<EOF >>./metallb-crds.yaml
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool

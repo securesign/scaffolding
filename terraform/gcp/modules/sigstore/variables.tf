@@ -107,6 +107,12 @@ variable "tuf_kms_location" {
   default     = "global"
 }
 
+variable "tuf_main_page_suffix" {
+  type        = string
+  description = "path to tuf bucket's directory index when missing object is treated as potential directories"
+  default     = ""
+}
+
 variable "ca_pool_name" {
   description = "Certificate authority pool name"
   type        = string
@@ -239,6 +245,12 @@ variable "mysql_binary_log_backup_enabled" {
   default     = true
 }
 
+variable "mysql_collation" {
+  type        = string
+  description = "collation setting for database"
+  default     = "utf8_general_ci"
+}
+
 variable "fulcio_keyring_name" {
   type        = string
   description = "Name of Fulcio keyring."
@@ -330,6 +342,8 @@ variable "dns_domain_name" {
 variable "ctlog_shards" {
   type = map(object({
     mysql_db_version = string
+    mysql_tier       = string
+    instance_name    = optional(string)
   }))
 
   description = "Map of CTLog shards to create. If keys are '2022' and '2023', it would create 2 independent CTLog Cloud MySql instances named sigstore-staging-ctlog-2022 and sigstore-staging-ctlog-2023."
