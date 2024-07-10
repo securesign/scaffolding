@@ -2,7 +2,7 @@ module github.com/sigstore/scaffolding
 
 go 1.22.4
 
-toolchain go1.22.5
+toolchain go1.22.4
 
 // toolchain go1.21.1
 
