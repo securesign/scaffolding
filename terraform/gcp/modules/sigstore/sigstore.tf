@@ -64,6 +64,7 @@ module "tuf" {
   gcs_logging_enabled = var.gcs_logging_enabled
   gcs_logging_bucket  = var.gcs_logging_bucket
   storage_class       = var.tuf_storage_class
+  main_page_suffix    = var.tuf_main_page_suffix
 
   tuf_service_account_name = var.tuf_service_account_name
 
@@ -174,6 +175,7 @@ module "mysql" {
   database_version  = var.mysql_db_version
   tier              = var.mysql_tier
   availability_type = var.mysql_availability_type
+  collation         = var.mysql_collation
 
   replica_zones = var.mysql_replica_zones
   replica_tier  = var.mysql_replica_tier
@@ -344,7 +346,7 @@ module "ctlog_shards" {
 
   for_each = var.ctlog_shards
 
-  instance_name = format("%s-ctlog-%s", var.cluster_name, each.key)
+  instance_name = each.value["instance_name"] != "" ? each.value["instance_name"] : format("%s-ctlog-%s", var.cluster_name, each.key)
 
   project_id = var.project_id
   region     = var.region
@@ -352,10 +354,7 @@ module "ctlog_shards" {
   cluster_name = var.cluster_name
 
   database_version = each.value["mysql_db_version"]
-
-  // NB: This is commented out so that we pick up the defaults
-  // for the particular environment consistently.
-  //mysql_tier              = var.mysql_tier
+  tier             = each.value["mysql_tier"] != "" ? each.value["mysql_tier"] : var.mysql_tier
 
   replica_zones = var.mysql_replica_zones
   replica_tier  = var.mysql_replica_tier
@@ -373,6 +372,7 @@ module "ctlog_shards" {
   require_ssl               = var.mysql_require_ssl
   backup_enabled            = var.mysql_backup_enabled
   binary_log_backup_enabled = var.mysql_binary_log_backup_enabled
+  collation                 = var.mysql_collation
 
 
   depends_on = [
@@ -423,6 +423,7 @@ module "standalone_mysqls" {
   require_ssl               = var.mysql_require_ssl
   backup_enabled            = var.mysql_backup_enabled
   binary_log_backup_enabled = var.mysql_binary_log_backup_enabled
+  collation                 = var.mysql_collation
 
 
   depends_on = [
