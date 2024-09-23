@@ -1,5 +1,5 @@
 # Build the tuf server binary
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.21@sha256:98a0ff138c536eee98704d6909699ad5d0725a20573e2c510a60ef462b45cce0 AS build-env
+FROM registry.redhat.io/rhel9/go-toolset@sha256:04be9e51263ab743cbcb778921b23527a3e35d493136fd353a90670d84ac457f AS build-env
 WORKDIR /tuf-server
 RUN git config --global --add safe.directory /tuf-server
 
@@ -9,7 +9,7 @@ RUN go mod vendor
 RUN make build-tuf-server
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:35a12657ce1bcb2b7667f4e6e0147186c1e0172cc43ece5452ab85afd6532791
+FROM registry.access.redhat.com/ubi9-minimal@sha256:1b6d711648229a1c987f39cfdfccaebe2bd92d0b5d8caa5dbaa5234a9278a0b2
 COPY --from=build-env /tuf-server/server /usr/local/bin/tuf-server
 RUN chown root:0 /usr/local/bin/tuf-server && chmod g+wx /usr/local/bin/tuf-server
 
