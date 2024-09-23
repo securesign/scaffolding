@@ -1,5 +1,5 @@
 # Build the createctconfig binary
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.21@sha256:98a0ff138c536eee98704d6909699ad5d0725a20573e2c510a60ef462b45cce0 AS build-env
+FROM registry.redhat.io/rhel9/go-toolset@sha256:04be9e51263ab743cbcb778921b23527a3e35d493136fd353a90670d84ac457f AS build-env
 WORKDIR /createctconfig
 RUN git config --global --add safe.directory /createctconfig
 
