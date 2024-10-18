@@ -1,5 +1,5 @@
 # Build the verifyfulcio binary
-FROM registry.redhat.io/rhel9/go-toolset@sha256:04be9e51263ab743cbcb778921b23527a3e35d493136fd353a90670d84ac457f AS build-env
+FROM registry.redhat.io/rhel9/go-toolset@sha256:b08eed026ac732d125e61ebfe3a0ef1dea7293b6a1c6d8b71c007a3088c4ed3b AS build-env
 WORKDIR /ctlog-verifyfulcio
 RUN git config --global --add safe.directory /ctlog-verifyfulcio
 
