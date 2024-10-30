@@ -33,6 +33,17 @@ spec:
     value: "true"
   - name: build-source-image
     value: "true"
+  taskRunSpecs:
+    - pipelineTaskName: prefetch-dependencies
+      stepSpecs:
+        - name: prefetch-dependencies
+          computeResources:
+            requests:
+              cpu: '3'
+              memory: 3Gi
+            limits:
+              cpu: '3'
+              memory: 3Gi
   pipelineSpec:
     finally:
     - name: show-sbom
