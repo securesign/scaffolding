@@ -44,6 +44,16 @@ spec:
             limits:
               cpu: '3'
               memory: 3Gi
+    - pipelineTaskName: run-unit-test
+      stepSpecs:
+        - name: run-tests
+          computeResources:
+            requests:
+              cpu: '3'
+              memory: 3Gi
+            limits:
+              cpu: '3'
+              memory: 3Gi
   pipelineSpec:
     finally:
     - name: show-sbom
