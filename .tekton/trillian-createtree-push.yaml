@@ -32,6 +32,27 @@ spec:
     value: "true"
   - name: prefetch-input
     value: '{"path": ".", "type": "gomod"}'
+  taskRunSpecs:
+    - pipelineTaskName: prefetch-dependencies
+      stepSpecs:
+        - name: prefetch-dependencies
+          computeResources:
+            requests:
+              cpu: '3'
+              memory: 3Gi
+            limits:
+              cpu: '3'
+              memory: 3Gi
+    - pipelineTaskName: run-unit-test
+      stepSpecs:
+        - name: run-tests
+          computeResources:
+            requests:
+              cpu: '3'
+              memory: 3Gi
+            limits:
+              cpu: '3'
+              memory: 3Gi
   pipelineSpec:
     finally:
     - name: show-sbom
