@@ -9,7 +9,7 @@ RUN go mod vendor
 RUN make build-trillian-createtree
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:f5d2c6a1e0c86e4234ea601552dbabb4ced0e013a1efcbfb439f1f6a7a9275b0
+FROM registry.access.redhat.com/ubi9-minimal@sha256:8b6978d555746877c73f52375f60fd7b6fd27d6aca000eaed27d0995303c13de
 COPY --from=build-env /createtree/createtree /usr/local/bin/createtree
 RUN chown root:0 /usr/local/bin/createtree && chmod g+wx /usr/local/bin/createtree
 
