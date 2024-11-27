@@ -6,7 +6,8 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "main"
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch == "main" && 
+      ( "cmd/trillian/createtree/*".pathChanged() || ".tekton/trillian-createtree-push.yaml".pathChanged() || "Dockerfile.trillian-createtree.rh".pathChanged() || "config/rekor/createtree/*".pathChanged() || "go.mod".pathChanged() || "Makefile".pathChanged() || "trigger-konflux-builds.txt".pathChanged() )
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: scaffold
