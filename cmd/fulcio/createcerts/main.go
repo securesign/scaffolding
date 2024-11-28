@@ -15,8 +15,9 @@
 package main
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
@@ -29,16 +30,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sigstore/scaffolding/pkg/secret"
+	"go.step.sm/crypto/pemutil"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/signals"
 	"sigs.k8s.io/release-utils/version"
-)
-
-const (
-	// Key in the configmap holding the value of the tree.
-	bitSize = 4096
 )
 
 var (
@@ -54,6 +51,7 @@ var (
 
 func main() {
 	flag.Parse()
+
 	ns := os.Getenv("NAMESPACE")
 	if ns == "" {
 		panic("env variable NAMESPACE must be set")
@@ -101,13 +99,11 @@ func main() {
 // createAll creates a password protected keypair, and returns PEM encoded
 // CA Cert, crypto.PublicKey, crypto.PrivateKey, password
 func createAll() ([]byte, []byte, []byte, string, error) {
-	// Generate RSA key.
-	key, err := rsa.GenerateKey(rand.Reader, bitSize)
+	// Generate ECDSA key.
+	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
-		return nil, nil, nil, "", fmt.Errorf("GenerateKey failed: %w", err)
+		return nil, nil, nil, "", fmt.Errorf("failed to generate ecdsa key: %w", err)
 	}
-	// Extract public component.
-	pub := key.Public()
 
 	serialNumber, err := rand.Int(rand.Reader, new(big.Int).SetInt64(math.MaxInt64))
 	if err != nil {
@@ -130,7 +126,8 @@ func createAll() ([]byte, []byte, []byte, string, error) {
 		BasicConstraintsValid: true,
 		MaxPathLen:            1,
 	}
-	derBytes, err := x509.CreateCertificate(rand.Reader, rootCA, rootCA, pub, key)
+
+	derBytes, err := x509.CreateCertificate(rand.Reader, rootCA, rootCA, privateKey.Public(), privateKey)
 	if err != nil {
 		return nil, nil, nil, "", fmt.Errorf("failed to create certificate: %w", err)
 	}
@@ -138,10 +135,14 @@ func createAll() ([]byte, []byte, []byte, string, error) {
 		&pem.Block{Type: "CERTIFICATE", Bytes: derBytes},
 	)
 
-	// Encode private key to PKCS#1 ASN.1 PEM.
+	// Encode private key to PKCS #8 ASN.1 PEM.
+	marshalledPrivKey, err := x509.MarshalPKCS8PrivateKey(privateKey)
+	if err != nil {
+		return nil, nil, nil, "", fmt.Errorf("marshal pkcs8 private key: %w", err)
+	}
 	block := &pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: x509.MarshalPKCS1PrivateKey(key),
+		Type:  "PRIVATE KEY",
+		Bytes: marshalledPrivKey,
 	}
 
 	// Generate a uuid as a password
@@ -149,7 +150,7 @@ func createAll() ([]byte, []byte, []byte, string, error) {
 	pwd := u.String()
 
 	// Encrypt the pem
-	block, err = x509.EncryptPEMBlock(rand.Reader, block.Type, block.Bytes, []byte(pwd), x509.PEMCipherAES256) // nolint
+	block, err = pemutil.EncryptPKCS8PrivateKey(rand.Reader, block.Bytes, []byte(pwd), x509.PEMCipherAES256)
 	if err != nil {
 		return nil, nil, nil, "", fmt.Errorf("EncryptPEMBlock failed: %w", err)
 	}
@@ -158,11 +159,15 @@ func createAll() ([]byte, []byte, []byte, string, error) {
 	if privPEM == nil {
 		return nil, nil, nil, "", fmt.Errorf("EncodeToMemory private key failed: %w", err)
 	}
-	// Encode public key to PKCS#1 ASN.1 PEM.
+
+	marshalledPubKey, err := x509.MarshalPKIXPublicKey(privateKey.Public())
+	if err != nil {
+		return nil, nil, nil, "", fmt.Errorf("failed to unmarshal public key: %w", err)
+	}
 	pubPEM := pem.EncodeToMemory(
 		&pem.Block{
-			Type:  "RSA PUBLIC KEY",
-			Bytes: x509.MarshalPKCS1PublicKey(pub.(*rsa.PublicKey)),
+			Type:  "PUBLIC KEY",
+			Bytes: marshalledPubKey,
 		},
 	)
 	if pubPEM == nil {

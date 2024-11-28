@@ -20,6 +20,7 @@ resource "google_project_service" "service" {
     "cloudkms.googleapis.com", // For KMS keyring and crypto key. roles/cloudkms.admin
     "compute.googleapis.com",  // For compute firewall, instance. roles/compute.securityAdmin, roles/compute.instanceAdmin
     "iam.googleapis.com",      // For creating service accounts and access control. roles/iam.serviceAccountAdmin
+    "osconfig.googleapis.com", // For using OS Config API (patching)
   ])
   service = each.key
 
@@ -113,12 +114,13 @@ resource "google_compute_instance" "bastion" {
   boot_disk {
     kms_key_self_link = google_kms_crypto_key.disk-key.id
     initialize_params {
-      image = "debian-cloud/debian-11"
+      image = "debian-cloud/debian-12"
     }
   }
 
   metadata = {
     block-project-ssh-keys = true
+    enable-osconfig        = "TRUE"
   }
 
   shielded_instance_config {
@@ -147,9 +149,49 @@ resource "google_compute_instance" "bastion" {
   depends_on = [google_project_service.service, google_kms_crypto_key_iam_binding.disk-key]
 }
 
+resource "google_os_config_patch_deployment" "patch" {
+  patch_deployment_id = "patch-deploy"
+
+  instance_filter {
+    instances = [google_compute_instance.bastion.id]
+  }
+
+  patch_config {
+    apt {
+      type = "DIST"
+    }
+  }
+
+  recurring_schedule {
+    time_zone {
+      id = "Etc/UTC"
+    }
+
+    time_of_day {
+      hours   = 0
+      minutes = 0
+      seconds = 0
+      nanos   = 0
+    }
+  }
+
+  depends_on = [google_project_service.service]
+}
+
 // Grant tunnel access to the GA team 
 resource "google_project_iam_member" "ga_tunnel_accessor_verifier_member" {
+  for_each = toset(var.tunnel_accessor_sa)
+
   project = var.project_id
   role    = "roles/iap.tunnelResourceAccessor"
-  member  = var.tunnel_accessor_sa
+  member  = each.key
+}
+
+// Grant access to impersonate the SA the bastion VM runs as
+resource "google_service_account_iam_member" "bastion_access" {
+  for_each = toset(var.tunnel_accessor_sa)
+
+  service_account_id = google_service_account.bastion.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = each.key
 }

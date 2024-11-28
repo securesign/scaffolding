@@ -34,11 +34,6 @@ variable "tuf_bucket" {
   description = "Name of GCS bucket for TUF root."
 }
 
-variable "tuf_preprod_bucket" {
-  type        = string
-  description = "Name of GCS bucket for preprod/staged TUF root."
-}
-
 variable "tuf_bucket_member" {
   type        = string
   description = "User, group, or service account to grant access to the TUF GCS buckets. Use 'allUsers' for general access, or e.g. group:mygroup@myorg.com for granular access."
@@ -93,4 +88,10 @@ variable "tuf_key_viewers" {
   type        = list(string)
   description = "List of members who can view the public key. See https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_kms_key_ring_iam#argument-reference for supported values"
   default     = []
+}
+
+variable "main_page_suffix" {
+  type        = string
+  description = "Behaves as the bucket's directory index where missing objects are treated as potential directories"
+  default     = ""
 }

@@ -20,34 +20,34 @@ jobs:
       COSIGN_EXPERIMENTAL: "true"
 
     steps:
-    - uses: actions/setup-go@cdcb36043654635271a94b9a6d1392de5bb323a7 # v5.0.1
+    - name: Check out code onto GOPATH
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
-        go-version: '1.22'
+        fetch-depth: 1
+        path: ./src/github.com/${{ github.repository }}
+
+    - uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+      with:
+        go-version-file: ./src/github.com/${{ github.repository }}/go.mod
         check-latest: true
 
     - name: Install ko
-      uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
+      uses: ko-build/setup-ko@3aebd0597dc1e9d1a26bcfdb7cbeb19c131d3037 # v0.7
 
     - name: Install cosign
-      uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
+      uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
 
     - name: Install GoReleaser
-      uses: goreleaser/goreleaser-action@5742e2a039330cbb23ebf35f046f814d4c6ff811 # v3.1.0
+      uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf # v3.1.0
       with:
         install-only: true
 
     - name: Log into ghcr.io
-      uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v3.1.0
+      uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Check out code onto GOPATH
-      uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
-      with:
-        fetch-depth: 1
-        path: ./src/github.com/${{ github.repository }}
 
     - name: Get TAG
       id: get_tag

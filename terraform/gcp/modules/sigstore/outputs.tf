@@ -120,3 +120,4 @@ output "bastion_kubectl" {
   description = "kubectl command using the local proxy once the bastion_ssh command is running"
   value       = "HTTPS_PROXY=socks5://localhost:8118 kubectl get pods --all-namespaces"
 }
+

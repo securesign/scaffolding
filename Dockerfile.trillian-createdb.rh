@@ -1,5 +1,5 @@
 # Build the createdb binary
-FROM registry.redhat.io/rhel9/go-toolset@sha256:04be9e51263ab743cbcb778921b23527a3e35d493136fd353a90670d84ac457f AS build-env
+FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder@sha256:356986205e66dcc03ef9a9fef5a7a13d6d59c29efacf1d971f9224c678932cf0 AS build-env
 WORKDIR /createdb
 RUN git config --global --add safe.directory /createdb
 

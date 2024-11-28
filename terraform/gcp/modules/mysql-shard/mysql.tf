@@ -25,7 +25,7 @@ resource "google_sql_database_instance" "trillian" {
   database_version = var.database_version
   region           = var.region
 
-  # Set to false to delete this database
+  # Set to false to delete this database using terraform
   deletion_protection = var.deletion_protection
 
   settings {
@@ -33,10 +33,13 @@ resource "google_sql_database_instance" "trillian" {
     activation_policy = "ALWAYS"
     availability_type = var.availability_type
 
+    # this sets the flag on the GCP platform to prevent deletion across all API surfaces
+    deletion_protection_enabled = var.deletion_protection
+
     ip_configuration {
       ipv4_enabled    = var.ipv4_enabled
       private_network = var.network
-      require_ssl     = var.require_ssl
+      ssl_mode        = var.require_ssl ? "TRUSTED_CLIENT_CERTIFICATE_REQUIRED" : "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
     }
 
     database_flags {
@@ -76,7 +79,7 @@ resource "google_sql_database_instance" "read_replica" {
     ip_configuration {
       ipv4_enabled    = var.ipv4_enabled
       private_network = var.network
-      require_ssl     = var.require_ssl
+      ssl_mode        = var.require_ssl ? "TRUSTED_CLIENT_CERTIFICATE_REQUIRED" : "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
     }
 
     database_flags {
@@ -90,7 +93,7 @@ resource "google_sql_database" "trillian" {
   name       = var.db_name
   project    = var.project_id
   instance   = google_sql_database_instance.trillian.name
-  collation  = "utf8_general_ci"
+  collation  = var.collation
   depends_on = [google_sql_database_instance.trillian]
 }
 
