@@ -36,7 +36,6 @@ resource "google_project_service" "service" {
 }
 
 resource "google_container_cluster" "cluster" {
-  provider = google-beta
   # This is where to enable Dataplane v2.
   datapath_provider = var.datapath_provider
 
@@ -67,6 +66,11 @@ resource "google_container_cluster" "cluster" {
     tags            = [local.cluster_network_tag]
     service_account = google_service_account.gke-sa.email
     oauth_scopes    = var.oauth_scopes
+    kubelet_config {
+      cpu_cfs_quota      = false
+      pod_pids_limit     = 0
+      cpu_manager_policy = "none"
+    }
   }
 
   resource_labels = {

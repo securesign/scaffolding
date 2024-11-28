@@ -66,11 +66,6 @@ variable "tuf_bucket" {
   description = "Name of GCS bucket for TUF root."
 }
 
-variable "tuf_preprod_bucket" {
-  type        = string
-  description = "Name of GCS bucket for preprod/staged TUF root."
-}
-
 variable "tuf_bucket_member" {
   type        = string
   description = "User(s) to grant access to the TUF GCS buckets."
@@ -105,6 +100,12 @@ variable "tuf_kms_location" {
   type        = string
   description = "Location of KMS keyring"
   default     = "global"
+}
+
+variable "tuf_main_page_suffix" {
+  type        = string
+  description = "path to tuf bucket's directory index when missing object is treated as potential directories"
+  default     = "index.html"
 }
 
 variable "ca_pool_name" {
@@ -158,8 +159,8 @@ variable "cluster_network_tag" {
 }
 
 variable "tunnel_accessor_sa" {
-  type        = string
-  description = "Email of group to give access to the tunnel to"
+  type        = list(string)
+  description = "Email of group to give access to the bastion tunnel to"
 }
 
 variable "github_repo" {
@@ -237,6 +238,12 @@ variable "mysql_binary_log_backup_enabled" {
   type        = bool
   description = "Whether to enable binary log for backup for MySQL instance."
   default     = true
+}
+
+variable "mysql_collation" {
+  type        = string
+  description = "collation setting for database"
+  default     = "utf8_general_ci"
 }
 
 variable "fulcio_keyring_name" {
@@ -330,6 +337,8 @@ variable "dns_domain_name" {
 variable "ctlog_shards" {
   type = map(object({
     mysql_db_version = string
+    mysql_tier       = string
+    instance_name    = optional(string)
   }))
 
   description = "Map of CTLog shards to create. If keys are '2022' and '2023', it would create 2 independent CTLog Cloud MySql instances named sigstore-staging-ctlog-2022 and sigstore-staging-ctlog-2023."
@@ -346,6 +355,12 @@ variable "standalone_mysql_tier" {
   type        = string
   description = "Machine tier for Standalone MySQL instance."
   default     = "db-n1-standard-4"
+}
+
+variable "standalone_mysql_ssl" {
+  type        = bool
+  description = "force connections to the database to use SSL"
+  default     = true
 }
 
 //  Cluster node pool

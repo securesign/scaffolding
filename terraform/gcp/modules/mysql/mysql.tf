@@ -83,6 +83,7 @@ resource "google_project_iam_member" "logserver_iam" {
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
     "roles/stackdriver.resourceMetadata.writer",
+    "roles/cloudsql.client",
     "roles/cloudtrace.agent"
   ])
   project    = var.project_id
@@ -108,7 +109,7 @@ resource "google_sql_database_instance" "sigstore" {
   database_version = var.database_version
   region           = var.region
 
-  # Set to false to delete this database
+  # Set to false to delete this database using terraform
   deletion_protection = var.deletion_protection
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
@@ -118,10 +119,13 @@ resource "google_sql_database_instance" "sigstore" {
     activation_policy = "ALWAYS"
     availability_type = var.availability_type
 
+    # this sets the flag on the GCP platform to prevent deletion across all API surfaces
+    deletion_protection_enabled = var.deletion_protection
+
     ip_configuration {
       ipv4_enabled    = var.ipv4_enabled
       private_network = var.network
-      require_ssl     = var.require_ssl
+      ssl_mode        = var.require_ssl ? "TRUSTED_CLIENT_CERTIFICATE_REQUIRED" : "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
     }
 
     database_flags {
@@ -142,10 +146,12 @@ resource "google_sql_database_instance" "sigstore" {
   }
 }
 
+/*
 moved {
   from = google_sql_database_instance.trillian
   to   = google_sql_database_instance.sigstore
 }
+*/
 
 resource "google_sql_database_instance" "read_replica" {
   for_each = toset(var.replica_zones)
@@ -166,7 +172,7 @@ resource "google_sql_database_instance" "read_replica" {
     ip_configuration {
       ipv4_enabled    = var.ipv4_enabled
       private_network = var.network
-      require_ssl     = var.require_ssl
+      ssl_mode        = var.require_ssl ? "TRUSTED_CLIENT_CERTIFICATE_REQUIRED" : "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
     }
 
     database_flags {
@@ -180,7 +186,7 @@ resource "google_sql_database" "trillian" {
   name       = var.db_name
   project    = var.project_id
   instance   = google_sql_database_instance.sigstore.name
-  collation  = "utf8_general_ci"
+  collation  = var.collation
   depends_on = [google_sql_database_instance.sigstore]
 }
 
@@ -188,24 +194,15 @@ resource "google_sql_database" "searchindexes" {
   name       = var.index_db_name
   project    = var.project_id
   instance   = google_sql_database_instance.sigstore.name
-  collation  = "utf8_general_ci"
+  collation  = var.collation
   depends_on = [google_sql_database_instance.sigstore]
-}
-
-resource "random_id" "user-password" {
-  keepers = {
-    name = google_sql_database_instance.sigstore.name
-  }
-
-  byte_length = 8
-  depends_on  = [google_sql_database_instance.sigstore]
 }
 
 resource "google_sql_user" "trillian" {
   name       = "trillian"
   project    = var.project_id
   instance   = google_sql_database_instance.sigstore.name
-  password   = random_id.user-password.hex
+  password   = data.google_secret_manager_secret_version_access.mysql-password.secret_data
   host       = "%"
   depends_on = [google_sql_database_instance.sigstore]
 }
@@ -217,12 +214,6 @@ resource "google_secret_manager_secret" "mysql-password" {
     auto {}
   }
   depends_on = [google_project_service.service]
-}
-
-resource "google_secret_manager_secret_version" "mysql-password" {
-  secret      = google_secret_manager_secret.mysql-password.id
-  secret_data = google_sql_user.trillian.password
-  depends_on  = [google_secret_manager_secret.mysql-password]
 }
 
 resource "google_secret_manager_secret" "mysql-user" {
@@ -251,4 +242,8 @@ resource "google_secret_manager_secret" "mysql-database" {
 resource "google_secret_manager_secret_version" "mysql-database" {
   secret      = google_secret_manager_secret.mysql-database.id
   secret_data = google_sql_database.trillian.name
+}
+
+data "google_secret_manager_secret_version_access" "mysql-password" {
+  secret = google_secret_manager_secret.mysql-password.id
 }
