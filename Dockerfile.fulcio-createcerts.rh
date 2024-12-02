@@ -1,5 +1,5 @@
 # Build the createcerts binary
-FROM registry.redhat.io/rhel9/go-toolset@sha256:04be9e51263ab743cbcb778921b23527a3e35d493136fd353a90670d84ac457f AS build-env
+FROM registry.redhat.io/rhel9/go-toolset@sha256:e8e961aebb9d3acedcabb898129e03e6516b99244eb64330e5ca599af9c7aa3d AS build-env
 WORKDIR /createcerts
 RUN git config --global --add safe.directory /createcerts
 
