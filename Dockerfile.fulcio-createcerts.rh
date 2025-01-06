@@ -1,5 +1,5 @@
 # Build the createcerts binary
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder@sha256:356986205e66dcc03ef9a9fef5a7a13d6d59c29efacf1d971f9224c678932cf0 AS build-env
+FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder@sha256:b848cf648a383b6e207ebd150afc7e65a90efe0d7734f4f6d2767144d58d68d0 AS build-env
 WORKDIR /createcerts
 RUN git config --global --add safe.directory /createcerts
 
