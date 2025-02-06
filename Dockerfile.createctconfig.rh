@@ -9,7 +9,7 @@ RUN go mod vendor
 RUN make build-ctlog-createctconfig
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:e408de45e95eed0539fe821d31aa4288fe430d94f09a24c13c567bf99044dace
+FROM registry.access.redhat.com/ubi9-minimal@sha256:a9c41b5bff991254fc62846fd1cd377ce1967dfd66dc2c76432610ab2586b29b
 COPY --from=build-env /createctconfig/createctconfig /usr/local/bin/createctconfig
 RUN chown root:0 /usr/local/bin/createctconfig && chmod g+wx /usr/local/bin/createctconfig
 

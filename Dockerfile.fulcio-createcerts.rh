@@ -8,7 +8,7 @@ RUN CGO_ENABLED=0 go mod vendor
 RUN CGO_ENABLED=0 go build -o createcerts -mod=readonly -trimpath ./cmd/fulcio/createcerts
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:e408de45e95eed0539fe821d31aa4288fe430d94f09a24c13c567bf99044dace
+FROM registry.access.redhat.com/ubi9-minimal@sha256:a9c41b5bff991254fc62846fd1cd377ce1967dfd66dc2c76432610ab2586b29b
 COPY --from=build-env /createcerts/createcerts /usr/local/bin/createcerts
 RUN chown root:0 /usr/local/bin/createcerts && chmod g+wx /usr/local/bin/createcerts
 
