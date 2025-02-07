@@ -9,7 +9,7 @@ RUN go mod vendor
 RUN make build-trillian-createdb
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:a9c41b5bff991254fc62846fd1cd377ce1967dfd66dc2c76432610ab2586b29b
+FROM registry.access.redhat.com/ubi9-minimal@sha256:e014f6a342c3790a07b771209b35713e3e4095ff631e4d8bb84966fab3d099e6
 COPY --from=build-env /createdb/createdb /usr/local/bin/createdb
 RUN chown root:0 /usr/local/bin/createdb && chmod g+wx /usr/local/bin/createdb
 
