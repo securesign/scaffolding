@@ -10,7 +10,7 @@ RUN go mod vendor
 RUN make build-ctlog-verifyfulcio
 
 # Install server
-FROM registry.access.redhat.com/ubi9-minimal@sha256:a9c41b5bff991254fc62846fd1cd377ce1967dfd66dc2c76432610ab2586b29b
+FROM registry.access.redhat.com/ubi9-minimal@sha256:98d90ac833df94ce6c07c7908ff29cfa3398a71b629e22d7af2d0df050ca7757
 
 COPY --from=build-env /ctlog-verifyfulcio/verifyfulcio /usr/local/bin/verifyfulcio
 RUN chown root:0 /usr/local/bin/verifyfulcio && chmod g+wx /usr/local/bin/verifyfulcio
