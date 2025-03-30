@@ -1,6 +1,8 @@
 module github.com/sigstore/scaffolding
 
-go 1.23.2
+go 1.23.4
+
+toolchain go1.23.7
 
 require (
 	chainguard.dev/exitdir v0.0.1
@@ -199,7 +201,7 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/pgtype v1.14.3 // indirect
 	github.com/jackc/pgx/v4 v4.18.3 // indirect
-	github.com/jedisct1/go-minisign v0.0.0-20230811132847-661be99b8267 // indirect
+	github.com/jedisct1/go-minisign v0.0.0-20241212093149-d2f9f49435c7 // indirect
 	github.com/jellydator/ttlcache/v3 v3.3.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.1-0.20220621161143-b0104c826a24 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
